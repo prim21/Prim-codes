@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Haven - Feeding Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="animal haven.png">
+            </div>
+            <nav class="nav">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="Dashboard.html">Dashboard</a></li>
+                    <li><a href="#live-data">Live Data</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="dashboard-container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <h1>Dashboard</h1>
+            </div>
+
+            <!-- Stats Cards Row -->
+            <div class="stats-row">
+                <div class="stat-card primary">
+                    <div class="stat-content">
+                        <div class="stat-label">Total Feedings Today</div>
+                        <div class="stat-value">12</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-label">Food Dispensed (kg)</div>
+                        <div class="stat-value">2.4</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card success">
+                    <div class="stat-content">
+                        <div class="stat-label">System Status</div>
+                        <div class="stat-value status-online">Online</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="main-grid">
+                <!-- Chart Section - Feeding Logs Table -->
+                <div class="chart-section">
+                    <div class="chart-header">
+                        <h3>Recent Feeding Logs</h3>
+                        <div class="chart-controls">
+                            <button class="time-btn active">Today</button>
+                            <button class="time-btn">This Week</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="logs-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Amount (g)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2025-07-27</td>
+                                    <td>14:30</td>
+                                    <td>200g</td>
+                                    <td><span class="status-badge success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2025-07-27</td>
+                                    <td>13:45</td>
+                                    <td>150g</td>
+                                    <td><span class="status-badge success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2025-07-27</td>
+                                    <td>12:15</td>
+                                    <td>180g</td>
+                                    <td><span class="status-badge success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2025-07-27</td>
+                                    <td>11:30</td>
+                                    <td>160g</td>
+                                    <td><span class="status-badge error">Failed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2025-07-27</td>
+                                    <td>10:45</td>
+                                    <td>220g</td>
+                                    <td><span class="status-badge success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2025-07-27</td>
+                                    <td>09:15</td>
+                                    <td>140g</td>
+                                    <td><span class="status-badge pending">Pending</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pie Chart Section - Daily Food Distribution -->
+                <div class="pie-section">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-dark);">Daily Food Distribution</h3>
+                    <div class="pie-chart-container">
+                        <canvas id="pieChart" width="140" height="140"></canvas>
+                        <div class="pie-percentage">75%</div>
+                    </div>
+                    <div class="pie-details">
+                        <div class="detail-item">
+                            <span class="legend-dot orange"></span>
+                            <span>Food Dispensed: 2.4kg</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="legend-dot gray"></span>
+                            <span>Remaining: 0.8kg</span>
+                        </div>
+                        <div class="detail-item">
+                            <span style="font-size: 0.8rem; color: var(--text-gray);">Total Capacity: 3.2kg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Area Chart Section - Activity Timeline -->
+                <div class="area-section">
+                    <div class="area-header">
+                        <h3>Recent System Activity</h3>
+                    </div>
+                    <div class="activity-timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <div class="timeline-text">Feeding completed successfully</div>
+                                <div class="timeline-time">2 minutes ago</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <div class="timeline-text">Feeding session completed</div>
+                                <div class="timeline-time">47 minutes ago</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <div class="timeline-text">Feeding failed - low food level</div>
+                                <div class="timeline-time">3 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <div class="timeline-text">System maintenance completed</div>
+                                <div class="timeline-time">5 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <div class="timeline-text">Food container refilled</div>
+                                <div class="timeline-time">1 day ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Animal Haven. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#contact">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pie Chart for Food Distribution
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [75, 25],
+                        backgroundColor: ['#ff6b35', '#e5e7eb'],
+                        borderWidth: 0,
+                        cutout: '75%'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Interactive elements
+            const timeBtns = document.querySelectorAll('.time-btn');
+            timeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    timeBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
