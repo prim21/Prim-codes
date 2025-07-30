@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animal Haven</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
     
 <body>
     <header class="header">
         <div class="container">
             <div class="logo">
-                <img src="animal haven.png" >
+                <img src="animal haven.png">
             </div>
             <nav class="nav">
                 <ul class="nav-links">
@@ -19,7 +20,12 @@
                     <li><a href="#about">About</a></li>
                     <li><a href="Dashboard.html">Dashboard</a></li>
                     <li><a href="#contact">Contact</a></li>
-
+                    <!-- Notification Bell -->
+                    <li class="notification-container">
+                        <button class="notification-bell" onclick="goToDashboardActivity()">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                    </li>
                 </ul>
             </nav>
             <div class="nav-toggle">
@@ -28,8 +34,6 @@
                 <span></span>
             </div>
         </div>
-
-        
     </header>
 
     <main class="main">
@@ -37,7 +41,7 @@
             <div class="container">
                 <h1 class="hero-title">Animal Haven</h1>
                 <p class="hero-subtitle">A safe place for animals in need</p>
-                <button class="cta-button">Explore </button>
+                <button class="cta-button">Explore</button>
             </div>
         </section>
 
@@ -67,7 +71,7 @@
             </div>
         </section>
     </main>
-                <!--SAMPLE SAMPLE SAMPLE RAWRRRR-->
+
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -81,7 +85,11 @@
         </div>
     </footer>
 
-
-
+    <script>
+        function goToDashboardActivity() {
+            // Navigate to dashboard page and scroll to activity section
+            window.location.href = 'Dashboard.html#activity-section';
+        }
+    </script>
 </body>
 </html>
