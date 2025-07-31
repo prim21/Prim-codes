@@ -39,8 +39,8 @@
     <main class="main">
         <section id="home" class="hero">
             <div class="container">
-                <h1 class="hero-title">Animal Haven</h1>
-                <p class="hero-subtitle">A safe place for animals in need</p>
+                <h1 class="hero-title">Tails of Freedom Animal Haven</h1>
+                <p class="hero-subtitle">Rescue · ReHab · ReHome</p>
                 <button class="cta-button">Explore</button>
             </div>
         </section>
@@ -49,22 +49,27 @@
             <div class="container">
                 <div class="content-wrapper">
                     <div class="content-left">
-                        <h2>About Animal Haven</h2>
-                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo aut, saepe fugiat cumque accusantium, ab dignissimos mollitia vitae harum veniam animi temporibus enim. Exercitationem voluptate omnis, at expedita eos dicta.</p>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque nihil consectetur natus esse accusantium quas et nam facilis, illum possimus qui dolores error unde magnam nesciunt consequuntur quo sint itaque.</p>
+                        <div class="section-tag">About Us</div>
+                        <h2>Tails of Freedom Animal Haven </h2>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa dicta voluptatibus architecto asperiores voluptates cumque sed vero maxime non totam doloremque libero, iure, molestiae quaerat sapiente voluptas vel deserunt tenetur?</p>
+                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nisi deserunt explicabo dolore doloremque. Obcaecati porro veniam dolor reprehenderit, facere nihil quisquam facilis ducimus beatae praesentium enim alias accusantium saepe vero.</p>
                     </div>
                     <div class="content-right">
                         <div class="image-gallery">
-                            <div class="gallery-item">
-                                <img src="images/animal-haven.png" alt="Animal 1">
+                            <div class="gallery-container">
+                                <div class="gallery-item">
+                                    <img src="images/animal-haven.png" alt="Animal 1">
+                                </div>
+                                <div class="gallery-item">
+                                    <img src="images/wait.jfif" alt="Animal 2">
+                                </div>
+                                <div class="gallery-item">
+                                    <img src="images/minute.jfif" alt="Animal 3">
+                                </div>
+                                <div class="gallery-item">
+                                    <img src="images/animal-haven.png" alt="Animal 4">
+                                </div>
                             </div>
-                            <div class="gallery-item">
-                                <img src="images/animal-haven.png" alt="Animal 2">
-                            </div>
-                        </div>
-                        <div class="navigation-arrows">
-                            <button class="arrow-left">&larr;</button>
-                            <button class="arrow-right">&rarr;</button>
                         </div>
                     </div>
                 </div>
@@ -75,17 +80,50 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <p>&copy; 2025 Animal Haven. All rights reserved.</p>
+                <p>&copy; 2025 Tails of Freedom Animal Haven. All rights reserved.</p>
                 <div class="footer-links">
-                    <a href="#privacy">Privacy Policy</a>
-                    <a href="#terms">Terms of Service</a>
-                    <a href="#contact">Contact Us</a>
+                    <a href="Privacy Policy.html">Privacy Policy</a>
+                    <a href="Terms of Service.html">Terms of Service</a>
+                    <a href="Contact.html">Contact Us</a>
                 </div>
             </div>
         </div>
     </footer>
 
     <script>
+        let currentImageIndex = 0;
+        const galleryContainer = document.querySelector('.gallery-container');
+        const totalImages = 4;
+        let autoSlideInterval;
+
+        function showImage(index) {
+            const translateX = -index * 25; // Move by 25% for each image
+            galleryContainer.style.transform = `translateX(${translateX}%)`;
+        }
+
+        function nextImage() {
+            currentImageIndex = (currentImageIndex + 1) % totalImages;
+            showImage(currentImageIndex);
+        }
+
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(nextImage, 3000); // Change image every 3 seconds
+        }
+
+        function stopAutoSlide() {
+            clearInterval(autoSlideInterval);
+        }
+
+        // Start auto-sliding when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            startAutoSlide();
+            
+            // Pause on hover
+            const gallery = document.querySelector('.image-gallery');
+            gallery.addEventListener('mouseenter', stopAutoSlide);
+            gallery.addEventListener('mouseleave', startAutoSlide);
+        });
+
         function goToDashboardActivity() {
             // Navigate to dashboard page and scroll to activity section
             window.location.href = 'Dashboard.html#activity-section';
