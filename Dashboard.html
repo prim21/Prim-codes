@@ -12,14 +12,14 @@
     <header class="header">
         <div class="container">
             <div class="logo">
-                <img src="images/animal-haven.png">
+                <img src="images/animal-haven.png" alt="Animal Haven Logo">
             </div>
             <nav class="nav">
                 <ul class="nav-links">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="index.html#about">About</a></li>
                     <li><a href="Dashboard.html">Dashboard</a></li>
-                    <li><a href="system-info.html">System Info</a></li>
+                    <li><a href="#system-info.html">System Info</a></li>
                     <!-- Notification Bell -->
                     <li class="notification-container">
                         <button class="notification-bell" onclick="scrollToActivity()">
@@ -43,7 +43,7 @@
                 <h1>Dashboard</h1>
             </div>
 
-            <!-- Stats Cards Row -->
+            <!-- Stats Cards Row - Now with 4 cards -->
             <div class="stats-row">
                 <div class="stat-card primary">
                     <div class="stat-content">
@@ -56,6 +56,13 @@
                     <div class="stat-content">
                         <div class="stat-label">Food Dispensed (kg)</div>
                         <div class="stat-value">2.4</div>
+                    </div>
+                </div>
+
+                <div class="stat-card feed-me" onclick="feedMe()">
+                    <div class="stat-content">
+                        <div class="stat-label">Feed Now</div>
+                        <div class="stat-value">Feed Me</div>
                     </div>
                 </div>
                 
@@ -88,7 +95,7 @@
                                     <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="logsTableBody">
                                 <tr>
                                     <td>2025-07-27</td>
                                     <td>14:30</td>
@@ -231,6 +238,60 @@
                 behavior: 'smooth',
                 block: 'start'
             });
+        }
+
+        // Feed Me function
+        function feedMe() {
+            // Show loading state
+            const feedButton = document.querySelector('.stat-card.feed-me .stat-value');
+            const originalText = feedButton.textContent;
+            feedButton.textContent = 'Feeding...';
+            
+            // Simulate feeding process
+            setTimeout(() => {
+                // Add new feeding log entry
+                const now = new Date();
+                const date = now.toISOString().split('T')[0];
+                const time = now.toTimeString().split(' ')[0].slice(0, 5);
+                const amount = Math.floor(Math.random() * 100) + 150; // Random amount between 150-250g
+                
+                const tableBody = document.getElementById('logsTableBody');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${date}</td>
+                    <td>${time}</td>
+                    <td>${amount}g</td>
+                    <td><span class="status-badge success">Completed</span></td>
+                `;
+                
+                // Add to top of table
+                tableBody.insertBefore(newRow, tableBody.firstChild);
+                
+                // Update total feedings count
+                const totalFeedingsCard = document.querySelector('.stat-card.primary .stat-value');
+                const currentCount = parseInt(totalFeedingsCard.textContent);
+                totalFeedingsCard.textContent = currentCount + 1;
+                
+                // Update food dispensed
+                const foodDispensedCard = document.querySelector('.stat-card:not(.primary):not(.success):not(.feed-me) .stat-value');
+                const currentAmount = parseFloat(foodDispensedCard.textContent);
+                const newAmount = (currentAmount + (amount / 1000)).toFixed(1);
+                foodDispensedCard.textContent = newAmount;
+                
+                // Reset button text
+                feedButton.textContent = originalText;
+                
+                // Add success animation
+                const feedCard = document.querySelector('.stat-card.feed-me');
+                feedCard.style.animation = 'feedPulse 1s ease-in-out';
+                setTimeout(() => {
+                    feedCard.style.animation = '';
+                }, 1000);
+                
+                // Show success message
+                alert('Feeding completed successfully! 🐾');
+                
+            }, 2000); // 2 second delay to simulate feeding process
         }
     </script>
 </body>

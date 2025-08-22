@@ -25,6 +25,8 @@
     --success-green: #10b981;
     --warning-yellow: #f59e0b;
     --error-red: #ef4444;
+    --feed-red-orange: #e63946;
+    --feed-gradient: linear-gradient(135deg, #f77f00 0%, #e63946 100%);
     --shadow-light: 0 2px 10px rgba(255,107,53,0.1);
     --shadow-medium: 0 5px 25px rgba(255,107,53,0.15);
     --shadow-heavy: 0 10px 40px rgba(255,107,53,0.2);
@@ -243,10 +245,10 @@ body {
     background: var(--border-gray);
 }
 
-/* Stats Row - Updated for 3 cards */
+/* Stats Row - Updated for 4 cards */
 .stats-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
     margin-bottom: 2rem;
 }
@@ -282,6 +284,36 @@ body {
     box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
 }
 
+.stat-card.feed-me {
+    background: var(--feed-gradient);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 16px rgba(230, 57, 70, 0.3);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card.feed-me::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: var(--transition);
+}
+
+.stat-card.feed-me:hover::before {
+    left: 100%;
+}
+
+.stat-card.feed-me:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(230, 57, 70, 0.4);
+}
+
 .stat-icon {
     font-size: 1.5rem;
     width: 48px;
@@ -294,7 +326,7 @@ body {
     flex-shrink: 0;
 }
 
-.stat-card:not(.primary):not(.success) .stat-icon {
+.stat-card:not(.primary):not(.success):not(.feed-me) .stat-icon {
     background: var(--light-gray);
     color: var(--primary-orange);
 }
@@ -669,6 +701,23 @@ body {
     color: var(--primary-orange);
 }
 
+/* Feed Me Button Animation */
+@keyframes feedPulse {
+    0% {
+        box-shadow: 0 4px 16px rgba(230, 57, 70, 0.3);
+    }
+    50% {
+        box-shadow: 0 8px 25px rgba(230, 57, 70, 0.5);
+    }
+    100% {
+        box-shadow: 0 4px 16px rgba(230, 57, 70, 0.3);
+    }
+}
+
+.stat-card.feed-me:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .nav-links {
@@ -708,7 +757,7 @@ body {
     }
     
     .stats-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
     }
     
@@ -749,6 +798,11 @@ body {
     
     .dashboard-header h1 {
         font-size: 1.3rem;
+    }
+    
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
     
     .stat-card {
