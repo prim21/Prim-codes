@@ -4,8 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animal Haven - Feeding Dashboard</title>
+    
+    <!-- External CSS -->
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- React CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
 <body>
@@ -18,9 +26,8 @@
                 <ul class="nav-links">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="index.html#about">About</a></li>
-                    <li><a href="Dashboard.html">Dashboard</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
                     <li><a href="system-info.html">System Info</a></li>
-                    <!-- Notification Bell -->
                     <li class="notification-container">
                         <button class="notification-bell" onclick="scrollToActivity()">
                             <i class="fas fa-bell"></i>
@@ -43,19 +50,19 @@
                 <h1>Dashboard</h1>
             </div>
 
-            <!-- Stats Cards Row - Now with 4 cards -->
+            <!-- Stats Cards Row -->
             <div class="stats-row">
                 <div class="stat-card primary">
                     <div class="stat-content">
                         <div class="stat-label">Total Feedings Today</div>
-                        <div class="stat-value">12</div>
+                        <div class="stat-value" id="total-feedings">12</div>
                     </div>
                 </div>
                 
                 <div class="stat-card">
                     <div class="stat-content">
                         <div class="stat-label">Food Dispensed (kg)</div>
-                        <div class="stat-value">2.4</div>
+                        <div class="stat-value" id="food-dispensed">2.4</div>
                     </div>
                 </div>
 
@@ -81,8 +88,8 @@
                     <div class="chart-header">
                         <h3>Recent Feeding Logs</h3>
                         <div class="chart-controls">
-                            <button class="time-btn active">Today</button>
-                            <button class="time-btn">This Week</button>
+                            <button class="time-btn active" onclick="filterLogs('today')">Today</button>
+                            <button class="time-btn" onclick="filterLogs('week')">This Week</button>
                         </div>
                     </div>
                     <div class="table-container">
@@ -93,65 +100,31 @@
                                     <th>Time</th>
                                     <th>Amount (g)</th>
                                     <th>Status</th>
+                                    <th>Photo</th>
                                 </tr>
                             </thead>
                             <tbody id="logsTableBody">
-                                <tr>
-                                    <td>2025-07-27</td>
-                                    <td>14:30</td>
-                                    <td>200g</td>
-                                    <td><span class="status-badge success">Completed</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2025-07-27</td>
-                                    <td>13:45</td>
-                                    <td>150g</td>
-                                    <td><span class="status-badge success">Completed</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2025-07-27</td>
-                                    <td>12:15</td>
-                                    <td>180g</td>
-                                    <td><span class="status-badge success">Completed</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2025-07-27</td>
-                                    <td>11:30</td>
-                                    <td>160g</td>
-                                    <td><span class="status-badge error">Failed</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2025-07-27</td>
-                                    <td>10:45</td>
-                                    <td>220g</td>
-                                    <td><span class="status-badge success">Completed</span></td>
-                                </tr>
-                                <tr>
-                                    <td>2025-07-27</td>
-                                    <td>09:15</td>
-                                    <td>140g</td>
-                                    <td><span class="status-badge pending">Pending</span></td>
-                                </tr>
+                                <!-- Populated by dashboard.js -->
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Pie Chart Section - Daily Food Distribution -->
+                <!-- Pie Chart Section -->
                 <div class="pie-section">
                     <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-dark);">Daily Food Distribution</h3>
                     <div class="pie-chart-container">
                         <canvas id="pieChart" width="140" height="140"></canvas>
-                        <div class="pie-percentage">75%</div>
+                        <div class="pie-percentage" id="pie-percentage">75%</div>
                     </div>
                     <div class="pie-details">
                         <div class="detail-item">
                             <span class="legend-dot orange"></span>
-                            <span>Food Dispensed: 2.4kg</span>
+                            <span id="food-dispensed-detail">Food Dispensed: 2.4kg</span>
                         </div>
                         <div class="detail-item">
                             <span class="legend-dot gray"></span>
-                            <span>Remaining: 0.8kg</span>
+                            <span id="food-remaining-detail">Remaining: 0.8kg</span>
                         </div>
                         <div class="detail-item">
                             <span style="font-size: 0.8rem; color: var(--text-gray);">Total Capacity: 3.2kg</span>
@@ -159,19 +132,9 @@
                     </div>
                 </div>
 
-                <!-- Area Chart Section - Activity Timeline -->
-                <div class="area-section" id="activity-section">
-                    <div class="area-header">
-                        <h3>Recent System Activity</h3>
-                    </div>
-                    <div class="activity-timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-content">
-                                <div class="timeline-text">Food container refilled</div>
-                                <div class="timeline-time">1 day ago</div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Live Data Section -->
+                <div class="live-data-section">
+                    <div id="live-data-container"></div>
                 </div>
             </div>
         </div>
@@ -181,118 +144,13 @@
         <div class="container">
             <div class="footer-content">
                 <p>&copy; 2025 Tails of Freedom Animal Haven. All rights reserved.</p>
-                <div class="footer-links">
-                   
-                </div>
+                <div class="footer-links"></div>
             </div>
         </div>
     </footer>
 
-    <script>
-        // Initialize Charts
-        document.addEventListener('DOMContentLoaded', function() {
-            // Pie Chart for Food Distribution
-            const pieCtx = document.getElementById('pieChart').getContext('2d');
-            new Chart(pieCtx, {
-                type: 'doughnut',
-                data: {
-                    datasets: [{
-                        data: [75, 25],
-                        backgroundColor: ['#ff6b35', '#e5e7eb'],
-                        borderWidth: 0,
-                        cutout: '75%'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-
-            // Interactive elements
-            const timeBtns = document.querySelectorAll('.time-btn');
-            timeBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    timeBtns.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-
-            // Check if we need to scroll to activity section
-            if (window.location.hash === '#activity-section') {
-                setTimeout(() => {
-                    document.getElementById('activity-section').scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }, 100);
-            }
-        });
-
-        // Function to scroll to activity section
-        function scrollToActivity() {
-            document.getElementById('activity-section').scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-
-        // Feed Me function
-        function feedMe() {
-            // Show loading state
-            const feedButton = document.querySelector('.stat-card.feed-me .stat-value');
-            const originalText = feedButton.textContent;
-            feedButton.textContent = 'Feeding...';
-            
-            // Simulate feeding process
-            setTimeout(() => {
-                // Add new feeding log entry
-                const now = new Date();
-                const date = now.toISOString().split('T')[0];
-                const time = now.toTimeString().split(' ')[0].slice(0, 5);
-                const amount = Math.floor(Math.random() * 100) + 150; // Random amount between 150-250g
-                
-                const tableBody = document.getElementById('logsTableBody');
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                    <td>${date}</td>
-                    <td>${time}</td>
-                    <td>${amount}g</td>
-                    <td><span class="status-badge success">Completed</span></td>
-                `;
-                
-                // Add to top of table
-                tableBody.insertBefore(newRow, tableBody.firstChild);
-                
-                // Update total feedings count
-                const totalFeedingsCard = document.querySelector('.stat-card.primary .stat-value');
-                const currentCount = parseInt(totalFeedingsCard.textContent);
-                totalFeedingsCard.textContent = currentCount + 1;
-                
-                // Update food dispensed
-                const foodDispensedCard = document.querySelector('.stat-card:not(.primary):not(.success):not(.feed-me) .stat-value');
-                const currentAmount = parseFloat(foodDispensedCard.textContent);
-                const newAmount = (currentAmount + (amount / 1000)).toFixed(1);
-                foodDispensedCard.textContent = newAmount;
-                
-                // Reset button text
-                feedButton.textContent = originalText;
-                
-                // Add success animation
-                const feedCard = document.querySelector('.stat-card.feed-me');
-                feedCard.style.animation = 'feedPulse 1s ease-in-out';
-                setTimeout(() => {
-                    feedCard.style.animation = '';
-                }, 1000);
-                
-                // Show success message
-                alert('Feeding completed successfully! 🐾');
-                
-            }, 2000); // 2 second delay to simulate feeding process
-        }
-    </script>
+    <!-- Load Scripts in Order -->
+    <script src="js/dashboard.js"></script>
+    <script src="js/live-data.js"></script>
 </body>
 </html>
