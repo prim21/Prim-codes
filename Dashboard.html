@@ -55,18 +55,18 @@
                 <div class="stat-card primary">
                     <div class="stat-content">
                         <div class="stat-label">Total Feedings Today</div>
-                        <div class="stat-value" id="total-feedings">12</div>
+                        <div class="stat-value" id="total-feedings">0</div>
                     </div>
                 </div>
                 
                 <div class="stat-card">
                     <div class="stat-content">
                         <div class="stat-label">Food Dispensed (kg)</div>
-                        <div class="stat-value" id="food-dispensed">2.4</div>
+                        <div class="stat-value" id="food-dispensed">0.0</div>
                     </div>
                 </div>
 
-                <div class="stat-card feed-me" onclick="feedMe()">
+                <div class="stat-card feed-me" id="feed-me-button">
                     <div class="stat-content">
                         <div class="stat-label">Feed Now</div>
                         <div class="stat-value">Feed Me</div>
@@ -88,8 +88,8 @@
                     <div class="chart-header">
                         <h3>Recent Feeding Logs</h3>
                         <div class="chart-controls">
-                            <button class="time-btn active" onclick="filterLogs('today')">Today</button>
-                            <button class="time-btn" onclick="filterLogs('week')">This Week</button>
+                            <button class="time-btn active" data-filter="today">Today</button>
+                            <button class="time-btn" data-filter="week">This Week</button>
                         </div>
                     </div>
                     <div class="table-container">
@@ -101,12 +101,21 @@
                                     <th>Amount (g)</th>
                                     <th>Status</th>
                                     <th>Photo</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="logsTableBody">
-                                <!-- Populated by dashboard.js -->
+                                <!-- Table will be populated by JavaScript -->
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <!-- More Button -->
+                    <div class="more-section">
+                        <button class="more-btn" id="more-button" style="display: none;">
+                            <i class="fas fa-chevron-down"></i>
+                            more
+                        </button>
                     </div>
                 </div>
 
@@ -115,16 +124,16 @@
                     <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-dark);">Daily Food Distribution</h3>
                     <div class="pie-chart-container">
                         <canvas id="pieChart" width="140" height="140"></canvas>
-                        <div class="pie-percentage" id="pie-percentage">75%</div>
+                        <div class="pie-percentage" id="pie-percentage">0%</div>
                     </div>
                     <div class="pie-details">
                         <div class="detail-item">
                             <span class="legend-dot orange"></span>
-                            <span id="food-dispensed-detail">Food Dispensed: 2.4kg</span>
+                            <span id="food-dispensed-detail">Food Dispensed: 0.0kg</span>
                         </div>
                         <div class="detail-item">
                             <span class="legend-dot gray"></span>
-                            <span id="food-remaining-detail">Remaining: 0.8kg</span>
+                            <span id="food-remaining-detail">Remaining: 3.2kg</span>
                         </div>
                         <div class="detail-item">
                             <span style="font-size: 0.8rem; color: var(--text-gray);">Total Capacity: 3.2kg</span>

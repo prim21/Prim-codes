@@ -1,30 +1,17 @@
 // Dashboard JavaScript Functions
 class DashboardManager {
     constructor() {
-        this.feedingLogs = [
-            { date: '2025-08-28', time: '16:06', amount: '200g', status: 'Completed', hasPhoto: true },
-            { date: '2025-08-28', time: '16:06', amount: '200g', status: 'Completed', hasPhoto: true },
-            { date: '2025-08-28', time: '16:06', amount: '200g', status: 'Completed', hasPhoto: true },
-            { date: '2025-08-28', time: '16:06', amount: '200g', status: 'Completed', hasPhoto: true },
-            { date: '2025-08-28', time: '16:06', amount: '200g', status: 'Completed', hasPhoto: true },
-            { date: '2025-07-27', time: '14:30', amount: '200g', status: 'Completed', hasPhoto: true },
-            { date: '2025-07-27', time: '13:45', amount: '150g', status: 'Completed', hasPhoto: true },
-            { date: '2025-07-27', time: '12:15', amount: '180g', status: 'Completed', hasPhoto: true },
-            { date: '2025-07-27', time: '11:30', amount: '160g', status: 'Failed', hasPhoto: false },
-            { date: '2025-07-27', time: '10:45', amount: '220g', status: 'Completed', hasPhoto: true },
-            { date: '2025-07-27', time: '09:15', amount: '140g', status: 'Pending', hasPhoto: false }
-        ];
+        // Start with empty logs - data will be added when "Feed Me" is clicked
+        this.feedingLogs = [];
         
-        this.weekLogs = [
-            ...this.feedingLogs,
-            { date: '2025-07-26', time: '16:20', amount: '180g', status: 'Completed', hasPhoto: true },
-            { date: '2025-07-26', time: '14:15', amount: '170g', status: 'Completed', hasPhoto: true },
-            { date: '2025-07-26', time: '11:45', amount: '190g', status: 'Failed', hasPhoto: false },
-            { date: '2025-07-25', time: '15:30', amount: '200g', status: 'Completed', hasPhoto: true }
-        ];
+        // Additional older logs that will show when "more" is clicked (empty initially)
+        this.olderLogs = [];
+        
+        this.weekLogs = [];
         
         this.currentFilter = 'today';
         this.pieChart = null;
+        this.showingMore = false;
         
         this.init();
     }
@@ -54,20 +41,51 @@ class DashboardManager {
                 filterButtons.forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 
-                if (e.target.textContent.includes('Today')) {
-                    this.filterLogs('today');
-                } else {
-                    this.filterLogs('week');
-                }
+                const filter = e.target.getAttribute('data-filter');
+                this.filterLogs(filter);
             });
         });
+
+        // Add event listener for Feed Me button
+        const feedMeButton = document.getElementById('feed-me-button');
+        if (feedMeButton) {
+            feedMeButton.addEventListener('click', () => {
+                this.feedMe();
+            });
+        }
+
+        // Add event listener for More button
+        const moreButton = document.getElementById('more-button');
+        if (moreButton) {
+            moreButton.addEventListener('click', () => {
+                this.loadMore();
+            });
+        }
     }
     
     populateLogsTable() {
         const tbody = document.getElementById('logsTableBody');
         if (!tbody) return;
         
-        const logs = this.currentFilter === 'today' ? this.feedingLogs : this.weekLogs;
+        let logs;
+        if (this.currentFilter === 'today') {
+            logs = this.showingMore ? [...this.feedingLogs, ...this.olderLogs] : this.feedingLogs;
+        } else {
+            logs = this.weekLogs;
+        }
+        
+        // If no logs, show empty table
+        if (logs.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-gray); font-style: italic;">
+                        No feeding logs yet. Click "Feed Me" to start feeding.
+                    </td>
+                </tr>
+            `;
+            this.updateMoreButton();
+            return;
+        }
         
         tbody.innerHTML = logs.map(log => {
             const statusClass = log.status.toLowerCase();
@@ -80,9 +98,41 @@ class DashboardManager {
                     <td>${log.amount}</td>
                     <td><span class="status-badge ${statusClass}">${log.status}</span></td>
                     <td>${photoIcon}</td>
+                    <td><i class="fas fa-trash delete-icon" onclick="window.dashboardManager.deleteLogEntry(this)" title="Delete"></i></td>
                 </tr>
             `;
         }).join('');
+        
+        // Update more button visibility
+        this.updateMoreButton();
+    }
+    
+    updateMoreButton() {
+        const moreBtn = document.getElementById('more-button');
+        if (!moreBtn) return;
+        
+        // Only show "more" button if there are older logs available and we're not showing them yet
+        if (this.currentFilter === 'today' && !this.showingMore && this.olderLogs.length > 0) {
+            moreBtn.style.display = 'flex';
+        } else {
+            moreBtn.style.display = 'none';
+        }
+    }
+    
+    loadMore() {
+        this.showingMore = true;
+        const moreBtn = document.getElementById('more-button');
+        const originalText = moreBtn.innerHTML;
+        
+        moreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        moreBtn.disabled = true;
+        
+        // Simulate loading delay
+        setTimeout(() => {
+            this.populateLogsTable();
+            moreBtn.innerHTML = originalText;
+            moreBtn.disabled = false;
+        }, 1000);
     }
     
     getPhotoIcon(status, hasPhoto) {
@@ -99,8 +149,36 @@ class DashboardManager {
     
     filterLogs(filter) {
         this.currentFilter = filter;
+        this.showingMore = false; // Reset more state when filtering
         this.populateLogsTable();
         this.updateStats();
+    }
+    
+    deleteLogEntry(element) {
+        if (confirm('Are you sure you want to delete this feeding log?')) {
+            const row = element.closest('tr');
+            const date = row.cells[0].textContent;
+            const time = row.cells[1].textContent;
+            const amount = row.cells[2].textContent;
+            
+            // Remove from data arrays
+            this.feedingLogs = this.feedingLogs.filter(log => 
+                !(log.date === date && log.time === time && log.amount === amount)
+            );
+            this.olderLogs = this.olderLogs.filter(log => 
+                !(log.date === date && log.time === time && log.amount === amount)
+            );
+            this.weekLogs = this.weekLogs.filter(log => 
+                !(log.date === date && log.time === time && log.amount === amount)
+            );
+            
+            // Animate and remove row
+            row.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => {
+                this.populateLogsTable();
+                this.updateStats();
+            }, 300);
+        }
     }
     
     initializePieChart() {
@@ -115,7 +193,7 @@ class DashboardManager {
             type: 'doughnut',
             data: {
                 datasets: [{
-                    data: [56, 44],
+                    data: [0, 100],
                     backgroundColor: ['#ff6b35', '#e5e7eb'],
                     borderWidth: 0,
                 }]
@@ -137,10 +215,16 @@ class DashboardManager {
     }
     
     updateStats() {
-        const logs = this.currentFilter === 'today' ? this.feedingLogs : this.weekLogs;
+        let logs;
+        if (this.currentFilter === 'today') {
+            logs = this.showingMore ? [...this.feedingLogs, ...this.olderLogs] : this.feedingLogs;
+        } else {
+            logs = this.weekLogs;
+        }
+        
         const completedFeedings = logs.filter(log => log.status === 'Completed').length;
         
-        // Update total feedings
+        // Update total feedings (start with 0 if no logs)
         const totalFeedingsEl = document.getElementById('total-feedings');
         if (totalFeedingsEl) {
             totalFeedingsEl.textContent = completedFeedings;
@@ -167,7 +251,7 @@ class DashboardManager {
         
         const totalCapacity = 3.2; // 3.2kg capacity
         const remaining = (totalCapacity - parseFloat(totalDispensedKg)).toFixed(1);
-        const percentage = Math.round((parseFloat(totalDispensedKg) / totalCapacity) * 100);
+        const percentage = totalDispensedKg > 0 ? Math.round((parseFloat(totalDispensedKg) / totalCapacity) * 100) : 0;
         
         if (foodDispensedDetailEl) {
             foodDispensedDetailEl.textContent = `Food Dispensed: ${totalDispensedKg}kg`;
@@ -187,51 +271,87 @@ class DashboardManager {
             this.pieChart.update();
         }
     }
+    
+    addNewFeeding() {
+        const now = new Date();
+        const dateString = now.toISOString().split('T')[0];
+        const timeString = now.toTimeString().slice(0, 5);
+        
+        // Generate random amount between 150g and 250g
+        const amounts = ['150g', '170g', '180g', '200g', '220g', '250g'];
+        const randomAmount = amounts[Math.floor(Math.random() * amounts.length)];
+        
+        const newLog = {
+            date: dateString,
+            time: timeString,
+            amount: randomAmount,
+            status: 'Completed',
+            hasPhoto: true
+        };
+        
+        // Add to the beginning of the array (most recent first)
+        this.feedingLogs.unshift(newLog);
+        this.weekLogs.unshift(newLog);
+        
+        // Move older entries to olderLogs array to show with "more" button
+        // Keep only the 5 most recent in feedingLogs, move rest to olderLogs
+        if (this.feedingLogs.length > 5) {
+            const movedLogs = this.feedingLogs.splice(5); // Remove entries beyond index 5
+            this.olderLogs.unshift(...movedLogs); // Add them to the beginning of olderLogs
+        }
+        
+        this.populateLogsTable();
+        this.updateStats();
+    }
+
+    feedMe() {
+        console.log('Feed Me clicked!');
+        
+        // Add visual feedback
+        const feedButton = document.getElementById('feed-me-button');
+        if (feedButton) {
+            feedButton.style.transform = 'translateY(-3px) scale(0.95)';
+            feedButton.style.boxShadow = '0 6px 20px rgba(230, 57, 70, 0.5)';
+            
+            setTimeout(() => {
+                feedButton.style.transform = '';
+                feedButton.style.boxShadow = '';
+            }, 200);
+        }
+        
+        // Show confirmation
+        const statValue = feedButton.querySelector('.stat-value');
+        const originalText = statValue.textContent;
+        statValue.textContent = 'Feeding...';
+        
+        setTimeout(() => {
+            statValue.textContent = 'Fed!';
+            setTimeout(() => {
+                statValue.textContent = originalText;
+            }, 2000);
+        }, 1000);
+        
+        // Add new feeding entry
+        this.addNewFeeding();
+    }
 }
 
 // Global Functions (for backward compatibility with existing HTML onclick handlers)
 function feedMe() {
-    // Simulate feeding action
-    console.log('Manual feeding initiated...');
-    
-    // Add visual feedback
-    const feedButton = document.querySelector('.stat-card.feed-me');
-    if (feedButton) {
-        feedButton.style.transform = 'translateY(-3px) scale(0.95)';
-        feedButton.style.boxShadow = '0 6px 20px rgba(230, 57, 70, 0.5)';
-        
-        setTimeout(() => {
-            feedButton.style.transform = '';
-            feedButton.style.boxShadow = '';
-        }, 200);
-    }
-    
-    // Show confirmation
-    const originalText = feedButton.querySelector('.stat-value').textContent;
-    feedButton.querySelector('.stat-value').textContent = 'Feeding...';
-    
-    setTimeout(() => {
-        feedButton.querySelector('.stat-value').textContent = 'Fed!';
-        setTimeout(() => {
-            feedButton.querySelector('.stat-value').textContent = originalText;
-        }, 2000);
-    }, 1000);
-    
-    // Update feeding logs (simulate new feeding)
-    const now = new Date();
-    const newLog = {
-        date: now.toISOString().split('T')[0],
-        time: now.toTimeString().slice(0, 5),
-        amount: '200g',
-        status: 'Completed',
-        hasPhoto: true
-    };
-    
-    // Add to dashboard manager if it exists
     if (window.dashboardManager) {
-        window.dashboardManager.feedingLogs.unshift(newLog);
-        window.dashboardManager.populateLogsTable();
-        window.dashboardManager.updateStats();
+        window.dashboardManager.feedMe();
+    }
+}
+
+function deleteLog(element) {
+    if (window.dashboardManager) {
+        window.dashboardManager.deleteLogEntry(element);
+    }
+}
+
+function loadMoreLogs() {
+    if (window.dashboardManager) {
+        window.dashboardManager.loadMore();
     }
 }
 

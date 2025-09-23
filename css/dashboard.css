@@ -474,6 +474,68 @@ body {
     color: var(--warning-yellow);
 }
 
+/* Delete Icon Styles */
+.delete-icon {
+    color: var(--error-red);
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 0.25rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.delete-icon:hover {
+    background: rgba(239, 68, 68, 0.1);
+    transform: scale(1.1);
+    color: #dc2626;
+}
+
+/* More Section */
+.more-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-gray);
+}
+
+.more-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    border: 2px solid var(--border-gray);
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-gray);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Poppins', sans-serif;
+}
+
+.more-btn:hover {
+    border-color: var(--primary-orange);
+    color: var(--primary-orange);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+}
+
+.more-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.more-btn i {
+    transition: var(--transition);
+}
+
+.more-btn:hover i:not(.fa-spin) {
+    transform: translateY(2px);
+}
+
 /* Pie Section */
 .pie-chart-container {
     position: relative;
@@ -621,13 +683,6 @@ body {
     border-top: 1px solid #f3f4f6;
 }
 
-.status-badge {
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-}
-
 .eating-indicator {
     display: flex;
     align-items: center;
@@ -728,6 +783,28 @@ body {
     }
 }
 
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .nav-links {
@@ -817,6 +894,15 @@ body {
     .logs-table th,
     .logs-table td {
         padding: 0.5rem;
+    }
+    
+    .more-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.8rem;
+    }
+    
+    .delete-icon {
+        font-size: 0.8rem;
     }
 }
 
