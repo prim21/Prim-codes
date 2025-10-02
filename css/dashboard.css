@@ -407,6 +407,33 @@ body {
     background: var(--light-gray);
 }
 
+.delete-all-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--error-red);
+    background: white;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--error-red);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.delete-all-btn:hover {
+    background: var(--error-red);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.delete-all-btn i {
+    font-size: 0.9rem;
+}
+
 .table-container {
     overflow-x: auto;
 }
@@ -859,6 +886,10 @@ body {
         width: 35px;
         height: 35px;
     }
+
+    .chart-controls {
+        flex-wrap: wrap;
+    }
 }
 
 @media (max-width: 480px) {
@@ -903,6 +934,11 @@ body {
     
     .delete-icon {
         font-size: 0.8rem;
+    }
+
+    .delete-all-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
     }
 }
 

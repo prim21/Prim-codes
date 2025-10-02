@@ -61,6 +61,14 @@ class DashboardManager {
                 this.loadMore();
             });
         }
+
+        // Add event listener for Delete All button
+        const deleteAllButton = document.getElementById('delete-all-button');
+        if (deleteAllButton) {
+            deleteAllButton.addEventListener('click', () => {
+                this.deleteAllLogs();
+            });
+        }
     }
     
     populateLogsTable() {
@@ -178,6 +186,63 @@ class DashboardManager {
                 this.populateLogsTable();
                 this.updateStats();
             }, 300);
+        }
+    }
+
+    async deleteAllLogs() {
+        // Show confirmation dialog
+        const confirmed = confirm('Are you sure you want to delete ALL feeding logs? This action cannot be undone and will also clear the data from the ESP32.');
+        
+        if (!confirmed) return;
+
+        const deleteAllBtn = document.getElementById('delete-all-button');
+        const originalHTML = deleteAllBtn.innerHTML;
+        
+        // Show loading state
+        deleteAllBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+        deleteAllBtn.disabled = true;
+
+        try {
+            // Send DELETE request to ESP32
+            // Replace 'YOUR_ESP32_IP' with your actual ESP32 IP address
+            const response = await fetch('http://YOUR_ESP32_IP/deleteAll', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                // Clear all log arrays
+                this.feedingLogs = [];
+                this.olderLogs = [];
+                this.weekLogs = [];
+                this.showingMore = false;
+
+                // Update the UI
+                this.populateLogsTable();
+                this.updateStats();
+
+                // Show success message
+                alert('All feeding logs have been deleted successfully!');
+            } else {
+                alert('Failed to delete logs from ESP32. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error deleting all logs:', error);
+            alert('Error connecting to the ESP32. The logs may have been cleared locally but not on the device. Please check your connection and try again.');
+            
+            // Still clear local data even if ESP32 request fails
+            this.feedingLogs = [];
+            this.olderLogs = [];
+            this.weekLogs = [];
+            this.showingMore = false;
+            this.populateLogsTable();
+            this.updateStats();
+        } finally {
+            // Restore button state
+            deleteAllBtn.innerHTML = originalHTML;
+            deleteAllBtn.disabled = false;
         }
     }
     
